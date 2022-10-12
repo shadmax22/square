@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+
+<html>
+
+<body>
+    <style>
+        div {
+            margin-left: 1em;
+        }
+
+        body {
+            overflow: hidden;
+        }
+
+        #window {
+            overflow-y: scroll;
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto;
+        }
+    </style>
+    <div id="window"></div>
+
+    <script src="jquery.js"></script>
+    <script src="main.js"></script>
+
+
+    <style>
+        .main_window {
+            float: left;
+        }
+
+        .e1 {
+            width: 100%;
+            height: 200px;
+            background: #66ff66;
+            margin-bottom: 10px;
+            float: left;
+        }
+
+        .e1 {
+            width: 100%;
+            height: 200px;
+            background: #66ff66;
+            margin-bottom: 10px;
+            float: left;
+        }
+
+        .e2 {
+            width: 100%;
+            height: 200px;
+            background: #66adff;
+            margin-bottom: 10px;
+            float: left;
+        }
+    </style>
+
+    <script>
+
+        var x = new exact();
+
+        x.page({
+            main: [
+                {
+                    label: "1",
+                    color: "red",
+                    id: "e1"
+
+                },
+                {
+                    label: "2",
+                    color: "red",
+                    id: "e1"
+
+                },
+                {
+                    label: "3",
+                    color: "red",
+                    id: "e1"
+
+                },
+                {
+                    label: "4",
+                    color: "red",
+                    id: "e1"
+
+                },
+                {
+                    label: "5",
+                    color: "red",
+                    id: "e1"
+
+                },
+                {
+                    label: "6",
+                    color: "red",
+                    id: "e2"
+
+                },
+                {
+                    label: "7",
+                    color: "red",
+                    id: "e2"
+
+                },
+                {
+                    label: "8",
+                    color: "red",
+                    id: "e1"
+
+                }
+                ,
+                {
+                    label: "9",
+                    color: "red",
+                    id: "e1"
+
+                },
+                {
+                    label: "10",
+                    color: "red",
+                    id: "e1"
+
+                }
+                ,
+                {
+                    label: "11",
+                    color: "red",
+                    id: "e1"
+
+                }
+                ,
+                {
+                    label: "12",
+                    color: "red",
+                    id: "e1"
+
+                }
+            ]
+        }, $("#window"));
+
+        // x.page({
+        //     "main": [
+        //         {
+        //             "label": "node1",
+        //             "color": "red",
+        //             "children": [
+        //                 {
+        //                     "label": "vip1",
+        //                     "color": "red",
+        //                     "children": [
+        //                         {
+        //                             "label": "obj1",
+        //                             "color": "gray",
+        //                             "id": "539803eae4b0ffad82491508"
+        //                         },
+        //                         {
+        //                             "label": "obj2",
+        //                             "color": "green",
+        //                             "id": "5395635ee4b071f136e4b691"
+        //                         },
+        //                         {
+        //                             "label": "obj3",
+        //                             "color": "green",
+        //                             "id": "539803e4e4b0ffad82491507",
+        //                             "children": [
+        //                                 {
+        //                                     "label": "obj1",
+        //                                     "color": "gray",
+        //                                     "id": "539803eae4b0ffad82491508"
+        //                                 }
+        //                             ]
+        //                         }
+        //                     ],
+        //                     "id": "53956358e4b071f136e4b690"
+        //                 },
+        //                 {
+        //                     "label": "vip2",
+        //                     "color": "blue",
+        //                     "id": "539803f2e4b0ffad82491509"
+        //                 }
+        //             ],
+        //             "id": "5395634ee4b071f136e4b68e"
+        //         },
+        //         {
+        //             "label": "node2",
+        //             "children": [
+        //                 {
+        //                     "label": "vip11",
+        //                     "color": "green",
+        //                     "id": "539803eae4b0ffad82491501"
+        //                 },
+        //                 {
+        //                     "label": "vip22",
+        //                     "color": "green",
+        //                     "id": "5395635ee4b071f136e4b694"
+        //                 }
+        //             ],
+        //             "id": "5395637fe4b071f136e4b692"
+        //         },
+        //         {
+        //             "label": "node3",
+        //             "color": "red",
+        //             "children": [
+
+        //             ],
+        //             "id": "53956371f136e4b692"
+        //         },
+        //         {
+        //             "label": "node4",
+        //             "color": "red",
+        //             "children": [
+
+        //             ],
+        //             "id": "5656"
+        //         },
+        //         {
+        //             "label": "node5",
+        //             "color": "red",
+        //             "children": [
+        //             ],
+        //             "id": "5395637fe4b071f13b692"
+        //         }
+        //     ]
+        // }, $("#window"));
+
+    </script>
+
+</body>
+
+</html>
