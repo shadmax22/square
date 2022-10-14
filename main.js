@@ -11,6 +11,7 @@ class exact {
         this.exScrollPermission = false;
         this.arr = null;
         this.noOfMainDiv = 0;
+        this.scrollWindow = 0;
     }
 
 
@@ -32,25 +33,34 @@ class exact {
                 this.bodyHeight += this.bodyHeight;
 
                 console.log("ACTIVATE " + this.stopPoint);
-                console.log(activity.scrollTop() + activity.innerHeight(), this.bodyHeight - 100)
-                this.maxHeight = this.bodyHeight + 100;
+                // console.log(activity.scrollTop() + activity.innerHeight(), this.bodyHeight - 100)
+                this.maxHeight = this.bodyHeight;
                 this.noOfMainDiv += 1;
                 console.log("Permited");
                 exec = true;
             }
         };
 
+        // TODO #1 OnScrollUp visible hidded partial window.
+
 
 
 
         if (behaviour.onload || behaviour.onscroll) {
+            // console.log(this.maxHeight, this.heightUsed);
 
-            let main = $("<div class='m_" + this.stopPoint + "'></div>");
+            if(behaviour.onscroll){
+                this.maxHeight += this.heightUsed;
+            }
+           
+            this.scrollWindow += 1;
+            let partToRemove = this.scrollWindow-3;
+            $(".data_partition_"+partToRemove).css("opacity", "0");
+            // console.log(".data_partition_"+partToRemove+"");
+            let main = $("<div class='m_" + this.stopPoint + "  data_partition_"+this.scrollWindow+"'></div>");
+      
             activity.append(main);
             for (var i = this.stopPoint + n; i < dom.length; i++) {
-
-
-
 
 
                 var $divParent = $("<div class='main_window " + dom[i].id + "'></div>");
@@ -63,12 +73,13 @@ class exact {
                 main.append($divParent);
 
                 var height = $divParent.outerHeight();
-                console.log(height);
+                
 
 
                 this.heightUsed += height;
+                console.log(this.heightUsed, this.maxHeight);
                 // console.log(this.heightUsed + " > " + this.bodyHeight);
-                if (this.heightUsed > this.maxHeight) {
+                if (this.heightUsed > this.maxHeight+100) {
 
                     this.exPermission = false;
                     this.exScrollPermission = true;
@@ -83,6 +94,7 @@ class exact {
                     console.log("Stopped at " + i);
                     break;
                 }
+                
 
 
 
