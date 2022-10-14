@@ -1,4 +1,4 @@
-class exact {
+class Square {
 
     constructor() {
         this.bodyHeight = window.innerHeight;
@@ -41,7 +41,7 @@ class exact {
             }
         };
 
-        // TODO #1 OnScrollUp visible hidded partial window.
+        // TODO #2 OnScrollUp trigger hidden partial windows to display.
 
 
 
