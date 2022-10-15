@@ -32,6 +32,8 @@ class Square {
                 this.exPermission = true;
                 this.bodyHeight += this.bodyHeight;
 
+                // View sense
+
                 console.log("ACTIVATE " + this.stopPoint);
                 // console.log(activity.scrollTop() + activity.innerHeight(), this.bodyHeight - 100)
                 this.maxHeight = this.bodyHeight;
