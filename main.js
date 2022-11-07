@@ -14,6 +14,7 @@ class Square {
         this.noOfMainDiv = 0;
         this.scrollWindow = 0;
         this.scrollTop = 0;
+        this.WINDOWS = [];
     }
 
 
@@ -59,41 +60,58 @@ class Square {
 
 
 
-        if(behaviour.upScroll || behaviour.downScroll){
+         // TODO #7 On scroll up/down, save revertable element state in memory.
+    
 
+         // We can create 2 array: 
+         
+         // 1. 1st array windows containing 
         
             if(behaviour.upScroll){
                
-         
-                let lastStoredWin = $(".part_win[dir='up']").last();
-                console.log(activity.scrollTop(), lastStoredWin.attr("scrolltop"));
-                if(activity.scrollTop() < lastStoredWin.attr("scrolltop")){
+                console.time("onUpScroll"); 
+             
+                let lastStoredWin = this.WINDOWS.findLast((e, i, a) =>{ return e['dir'] == "up"});
+                // console.log(lastStoredWin);
+
+                if(lastStoredWin != undefined) {
+
+                let e = $(".m_"+lastStoredWin['stopId']);
+
+            
+                if(activity.scrollTop() < lastStoredWin['scrollTop']){
 
                   
                    
-                    lastStoredWin.css("opacity", '1');
-                    lastStoredWin.attr("dir", "down");
+                    e.css("opacity", '1');
+                    lastStoredWin['dir']= 'down';
                     
 
                 }
 
                
-                
-                
+              
+            }
+            console.timeEnd("onUpScroll");  
                
             }
             if(behaviour.downScroll){
 
-                
-                let lastStoredWin = $(".part_win[dir='down']").first();
-           
-                if(activity.scrollTop() > lastStoredWin.attr("scrolltop")){
-
-                    lastStoredWin.attr('dir', 'up');
-                    lastStoredWin.css("opacity", '0');
+                console.time("onDownScroll");
+                let lastStoredWin = this.WINDOWS.find((e, i, a) =>{ return e['dir'] == "down"});
+              
+                let e = $(".m_"+lastStoredWin['stopId']);
+               
+                if(activity.scrollTop() > lastStoredWin["scrollTop"]){
+                   
+                    lastStoredWin['dir']= 'up';
+                    console.log(lastStoredWin);
+                    e.css("opacity", '0');
                     
 
                 }
+
+                console.timeEnd("onDownScroll");
 
              
                 
@@ -102,17 +120,19 @@ class Square {
             
           
             
-        }
+        
 
         
         
         if (behaviour.onload || behaviour.fetchScroll) {
             
-            let main = $("<div class='part_win m_" + this.stopPoint + "  data_partition_"+this.scrollWindow+"' dir=down vis=1></div>");
+
+            let main = $("<div class='part_win m_" + this.stopPoint + " ' dir=down vis=1></div>");
       
             activity.append(main);
 
             var LOADED_EL = 0;
+            let stopPoint = this.stopPoint;
 
             for (var i = this.stopPoint + n; i < dom.length; i++) {
 
@@ -161,7 +181,9 @@ class Square {
 
             }
 
+            this.WINDOWS.push({stopId: stopPoint, dir: "down", scrollTop: this.heightUsed});
             main.attr("scrollTop", this.heightUsed);
+            main.css("height", this.heightUsed);
 
          
 
