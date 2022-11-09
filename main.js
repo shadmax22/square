@@ -1,7 +1,8 @@
 class Square {
 
     constructor() {
-        this.bodyHeight = window.innerHeight;
+        this.defaultWindowSize = window.innerHeight;
+        this.bodyHeight = this.defaultWindowSize;
         this.maxHeight = this.bodyHeight + 100;
         this.heightUsed = 0;
         this.exPermission = true;
@@ -12,6 +13,7 @@ class Square {
         this.arr = null;
         this.noOfMainDiv = 0;
         this.scrollWindow = 0;
+        this.scrollTop = 0;
     }
 
 
@@ -20,23 +22,35 @@ class Square {
     }
     appendDOM(dom, activity, n) {
 
-        let behaviour = { onload: false, onscroll: false }
+        let behaviour = { onload: false, fetchScroll: false, upScroll: false, downScroll: false }
         let exec = false;
 
 
         if (n == 0) { behaviour.onload = true; }
         if (n == 1) {
+            
+            if(activity.scrollTop() + activity.innerHeight() < this.scrollTop){
+                
+                behaviour.upScroll = true;
+             
+            }else{
+                behaviour.downScroll = true;
+            }
+        
+            this.scrollTop = activity.scrollTop() + activity.innerHeight();
+           
+            
 
-            if (activity.scrollTop() + activity.innerHeight() > this.bodyHeight - 100) {
-                behaviour.onscroll = true;
+            if (this.scrollTop > this.bodyHeight - 100) {
+                behaviour.fetchScroll = true;
                 this.exPermission = true;
-                this.bodyHeight += this.bodyHeight;
+                this.bodyHeight += this.defaultWindowSize;
 
-                console.log("ACTIVATE " + this.stopPoint);
-                // console.log(activity.scrollTop() + activity.innerHeight(), this.bodyHeight - 100)
-                this.maxHeight = this.bodyHeight;
+                
+
+        
                 this.noOfMainDiv += 1;
-                console.log("Permited");
+        
                 exec = true;
             }
         };
@@ -45,53 +59,96 @@ class Square {
 
 
 
+        if(behaviour.upScroll || behaviour.downScroll){
 
-        if (behaviour.onload || behaviour.onscroll) {
-            // console.log(this.maxHeight, this.heightUsed);
+        
+            if(behaviour.upScroll){
+               
+         
+                let lastStoredWin = $(".part_win[dir='up']").last();
+                console.log(activity.scrollTop(), lastStoredWin.attr("scrolltop"));
+                if(activity.scrollTop() < lastStoredWin.attr("scrolltop")){
 
-            if(behaviour.onscroll){
-                this.maxHeight += this.heightUsed;
+                  
+                   
+                    lastStoredWin.css("opacity", '1');
+                    lastStoredWin.attr("dir", "down");
+                    
+
+                }
+
+               
+                
+                
+               
             }
+            if(behaviour.downScroll){
+
+                
+                let lastStoredWin = $(".part_win[dir='down']").first();
            
-            this.scrollWindow += 1;
-            let partToRemove = this.scrollWindow-3;
-            $(".data_partition_"+partToRemove).css("opacity", "0");
-            // console.log(".data_partition_"+partToRemove+"");
-            let main = $("<div class='m_" + this.stopPoint + "  data_partition_"+this.scrollWindow+"'></div>");
+                if(activity.scrollTop() > lastStoredWin.attr("scrolltop")){
+
+                    lastStoredWin.attr('dir', 'up');
+                    lastStoredWin.css("opacity", '0');
+                    
+
+                }
+
+             
+                
+              
+            }
+            
+          
+            
+        }
+
+        
+        
+        if (behaviour.onload || behaviour.fetchScroll) {
+            
+            let main = $("<div class='part_win m_" + this.stopPoint + "  data_partition_"+this.scrollWindow+"' dir=down vis=1></div>");
       
             activity.append(main);
+
+            var LOADED_EL = 0;
+
             for (var i = this.stopPoint + n; i < dom.length; i++) {
 
+                
 
                 var $divParent = $("<div class='main_window " + dom[i].id + "'></div>");
 
                 $divParent.text("dom " + i + " " + dom[i].label).attr('id', dom[i].id);
                 if (dom[i].children) {
-                    // console.log(dom[i].children);
+              
                     this.domToHTML(dom[i].children, $divParent);
                 }
                 main.append($divParent);
 
-                var height = $divParent.outerHeight();
+                var height = $divParent.outerHeight(true);
                 
 
 
                 this.heightUsed += height;
-                console.log(this.heightUsed, this.maxHeight);
-                // console.log(this.heightUsed + " > " + this.bodyHeight);
-                if (this.heightUsed > this.maxHeight+100) {
+                LOADED_EL += 1;
+          
+
+              
+                if (this.heightUsed > this.bodyHeight) {
 
                     this.exPermission = false;
                     this.exScrollPermission = true;
                     this.stopPoint = i;
-                    console.log("Stopped at " + i);
+                  
                     break;
                 }
                 if (i == dom.length - 1) {
                     this.exPermission = false;
                     this.stopPoint = i;
                     this.exScrollPermission = true;
-                    console.log("Stopped at " + i);
+          
                     break;
                 }
                 
@@ -103,6 +160,10 @@ class Square {
 
 
             }
+
+            main.attr("scrollTop", this.heightUsed);
+
+         
 
         }
 
@@ -114,128 +175,10 @@ class Square {
     domToHTML(dom, activity) {
 
         this.appendDOM(dom, activity, 0);
-        // for (var i = 0; i < dom.length; i++) {
-
-        //     if (this.exPermission) {
-
-
-
-        //         var $divParent = $("<div class='" + dom[i].id + "'></div>");
-
-        //         $divParent.text("dom " + i + " " + dom[i].label).attr('id', dom[i].id);
-        //         if (dom[i].children) {
-        //             // console.log(dom[i].children);
-        //             this.domToHTML(dom[i].children, $divParent);
-        //         }
-        //         activity.append($divParent);
-
-        //         var height = $divParent.outerHeight();
-
-
-
-        //         this.heightUsed += height;
-        //         // console.log(this.heightUsed + " > " + this.bodyHeight);
-        //         if (this.heightUsed > this.maxHeight) {
-
-        //             this.exPermission = false;
-        //             this.stopPoint = i;
-        //             console.log("Stopped at " + i);
-        //         }
-        //         if (i == dom.length - 1) {
-        //             this.exPermission = false;
-        //             this.stopPoint = i;
-        //             console.log("Stopped at " + i);
-        //         }
-
-
-
-
-        //     }
-
-
-        // }
-
-        console.log("ARRAY LENGTH: " + dom.length);
+       
         activity.scroll(() => {
 
-            // if (activity.scrollTop() + activity.innerHeight() > this.bodyHeight - 100 && this.exScrollPermission) {
-
-
-
-
-
-            //     this.bodyHeight += this.bodyHeight;
-
-            //     console.log("ACTIVATE " + this.stopPoint);
-            //     this.maxHeight = this.bodyHeight + 100;
-            //     this.noOfMainDiv += 1;
-
-            //     var $mainDiv = $("<div class='main_" + this.noOfMainDiv + "'></div>");
-
-
-            //     for (var i = this.stopPoint + 1; i < dom.length; i++) {
-
-
-
-            //         this.arr = dom;
-
-
-
-            //         var $divParent = $("<div class='e2'></div>");
-            //         try {
-            //             $divParent.text("dom " + i + " " + dom[i].label).attr('id', dom[i].id);
-            //         }
-            //         catch (e) {
-            //             console.log("ERROR id: " + i);
-            //         }
-
-            //         if (dom[i].children) {
-            //             // console.log(dom[i].children);
-            //             this.domToHTML(dom[i].children, $divParent);
-            //         }
-
-            //         $mainDiv.append($divParent);
-            //         activity.append($mainDiv);
-
-            //         var height = $divParent.outerHeight();
-
-
-            //         this.heightUsed += height;
-            //         console.log(this.heightUsed + ">=" + this.maxHeight, i);
-            //         if (this.heightUsed >= this.maxHeight) {
-
-            //             this.heightSum = this.newheightSum;
-            //             console.log(this.newheightSum >= this.heightSum, i);
-            //             this.stopPoint = i;
-            //             break;
-
-            //         }
-
-
-
-
-
-
-
-
-            //     }
-
-            //     this.st = activity.scrollTop() + activity.innerHeight();
-            //     console.log([{
-            //         bodyHeight: this.bodyHeight,
-            //         heightUsed: this.heightUsed,
-            //         maxHeight: this.maxHeight,
-            //         i: i,
-            //         height: height,
-            //         offsetTop: $divParent.offset().top,
-            //         outerHeight: $divParent.outerHeight(),
-            //         scrollTop: activity.scrollTop() + activity.innerHeight()
-
-            //     }][0]);
-
-
-
-            // }
+     
 
             this.appendDOM(dom, activity, 1);
 
