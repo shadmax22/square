@@ -26,11 +26,13 @@ class Square {
         let behaviour = { onload: false, fetchScroll: false, upScroll: false, downScroll: false }
         let exec = false;
 
-
+      
         if (n == 0) { behaviour.onload = true; }
         if (n == 1) {
+
+           
             
-            if(activity.scrollTop() + activity.innerHeight() < this.scrollTop){
+            if(activity.scrollTop + activity.offsetHeight < this.scrollTop){
                 
                 behaviour.upScroll = true;
              
@@ -38,7 +40,7 @@ class Square {
                 behaviour.downScroll = true;
             }
         
-            this.scrollTop = activity.scrollTop() + activity.innerHeight();
+            this.scrollTop = activity.scrollTop + activity.offsetHeight;
            
             
 
@@ -76,14 +78,14 @@ class Square {
 
                 if(lastStoredWin != undefined) {
 
-                let e = $(".m_"+lastStoredWin['stopId']);
+                let e = document.querySelector(".m_"+lastStoredWin['stopId']);
 
             
-                if(activity.scrollTop() < lastStoredWin['scrollTop']){
+                if(activity.scrollTop < lastStoredWin['scrollTop']){
 
                   
                    
-                    e.css("opacity", '1');
+                    e.style.opacity =  '1';
                     lastStoredWin['dir']= 'down';
                     
 
@@ -97,16 +99,18 @@ class Square {
             }
             if(behaviour.downScroll){
 
+                
+
                 console.time("onDownScroll");
                 let lastStoredWin = this.WINDOWS.find((e, i, a) =>{ return e['dir'] == "down"});
               
-                let e = $(".m_"+lastStoredWin['stopId']);
+                let e = document.querySelector(".m_"+lastStoredWin['stopId']);
                
-                if(activity.scrollTop() > lastStoredWin["scrollTop"]){
+                if(activity.scrollTop > lastStoredWin["scrollTop"]){
                    
                     lastStoredWin['dir']= 'up';
                     console.log(lastStoredWin);
-                    e.css("opacity", '0');
+                    e.style.opacity = 0;
                     
 
                 }
@@ -126,8 +130,13 @@ class Square {
         
         if (behaviour.onload || behaviour.fetchScroll) {
             
+            
+            // let main = $("<div class='part_win m_" + this.stopPoint + " ' dir=down vis=1></div>");
 
-            let main = $("<div class='part_win m_" + this.stopPoint + " ' dir=down vis=1></div>");
+            let main =  document.createElement("div");
+            main.className= "part_win m_"+this.stopPoint;
+            main.setAttribute("dir", "down");
+            main.setAttribute("vis", "1");
       
             activity.append(main);
 
@@ -138,16 +147,22 @@ class Square {
 
                 
 
-                var $divParent = $("<div class='main_window " + dom[i].id + "'></div>");
+                // var $divParent = $("<div class='main_window " + dom[i].id + "'></div>");
 
-                $divParent.text("dom " + i + " " + dom[i].label).attr('id', dom[i].id);
+                var $divParent = document.createElement("div");
+                $divParent.className = "main_window "+dom[i].id;
+                $divParent.setAttribute('id', dom[i].id);
+
+                $divParent.innerText = "dom " + i + " " + dom[i].label; ;
                 if (dom[i].children) {
               
                     this.domToHTML(dom[i].children, $divParent);
                 }
                 main.append($divParent);
 
-                var height = $divParent.outerHeight(true);
+                var height = $divParent.offsetHeight+parseInt(window.getComputedStyle($divParent).getPropertyValue('margin-top'))+parseInt(window.getComputedStyle($divParent).getPropertyValue('margin-bottom'));
+
+                console.log(height);
                 
 
 
@@ -176,14 +191,14 @@ class Square {
 
 
 
-
+                
 
 
             }
 
             this.WINDOWS.push({stopId: stopPoint, dir: "down", scrollTop: this.heightUsed});
-            main.attr("scrollTop", this.heightUsed);
-            main.css("height", this.heightUsed);
+            main.setAttribute("scrollTop", this.heightUsed);
+            main.style.height = this.heightUsed;
 
          
 
@@ -198,16 +213,16 @@ class Square {
 
         this.appendDOM(dom, activity, 0);
        
-        activity.scroll(() => {
+        activity.onscroll =() => {
 
      
-
+          
             this.appendDOM(dom, activity, 1);
 
 
 
 
-        });
+        };
 
 
     }
