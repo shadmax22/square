@@ -25,15 +25,17 @@ class Square {
     }
     appendDOM(dom, activity, n) {
 
-        let behaviour = { onload: false, fetchScroll: false, upScroll: false, downScroll: false, fetchSome: false }
+        let behaviour = { onload: false, fetchScroll: false, upScroll: false, downScroll: false, fetchSome: false, fetchAll: false}
         let exec = false;
 
-      
-        if (n == 0) { behaviour.onload = true; }
+        let s = 0;
+
+        if (n == 0) { behaviour.onload = true; s = 0;}
         if (n == 1) {
 
            
-            
+            s = 1; 
+
             if(activity.scrollTop + activity.offsetHeight < this.__SCROLLTOP){
                 
                 behaviour.upScroll = true;
@@ -59,7 +61,9 @@ class Square {
                 exec = true;
             }
         };
-        if (n==3) { behaviour.fetchSome = true; }
+        if (n==3) { behaviour.fetchSome = true; s = 0; }
+
+        if (n==4) { behaviour.fetchAll = true; s = 0; }
 
         // TODO #2 OnScrollUp trigger hidden partial windows to display.
 
@@ -164,44 +168,112 @@ class Square {
 
         
         
-        if (behaviour.onload || behaviour.fetchScroll || behaviour.fetchSome) {
+        if (behaviour.onload || behaviour.fetchScroll || behaviour.fetchSome || behaviour.fetchAll) {
             
             
             // let main = $("<div class='part_win m_" + this.stopPoint + " ' dir=down vis=1></div>");
+            // console.log(behaviour.fetchAll);
 
-            let main =  document.createElement("div");
+            let main = null;
+            if(!behaviour.fetchAll){
+
+                
+            
+            
+            main =  document.createElement("div");
             main.className= "part_win m_"+this.__STOP_POINT;
             main.setAttribute("dir", "down");
             main.setAttribute("vis", "1");
-      
+
+            
+            
+          
             activity.append(main);
 
+            }
+
             var LOADED_EL = 0;
-            let stopPoint = this.__STOP_POINT;
+       
             var win_h = 0;
 
-            if(behaviour.fetchSome) { n = 1; }
+            let stopPoint = this.__STOP_POINT;
+            
+            if(behaviour.fetchSome) { s = 1; }
+            if(behaviour.fetchAll) { 
+                s = 0; 
+               
 
-            for (var i = this.__STOP_POINT + n; i < dom.length; i++) {
+                stopPoint = 0;
+
+             }
+
+            for (var i = stopPoint + s; i < dom.length; i++) {
+
+                // DOM Behaviour starts here
+
+                var _E = document.createElement((dom[i].e != undefined)? dom[i].e : "div");
+
+                if(dom[i].attr != undefined){
+
+                    let a = Object.keys(dom[i].attr[0]);
+                    let b = dom[i].attr[0];
+                  
+                    for(let j = 0; j < a.length; j++ ) {
+                        
+                      
+
+                        _E.setAttribute(a[j], b[a[j]]);
+                    
+
+                        
+                      }
+                    
+
+                }
+
+              
+
+                if(dom[i].style){
+                    _E.setAttribute("style", dom[i].style);
+                }
+
+                if(dom[i].html){
+
+                    _E.innerHTML = dom[i].html;
+
+                }else{
+
 
                 
-
-                // var $divParent = $("<div class='main_window " + dom[i].id + "'></div>");
-
-                var $divParent = document.createElement("div");
-                $divParent.className = "main_window "+dom[i].id;
-                $divParent.setAttribute('id', dom[i].id);
-
-                $divParent.innerText = "dom " + i + " " + dom[i].label; ;
-                if (dom[i].children) {
+                (dom[i].text) ? _E.innerText = dom[i].text : _E.innerText = "dom " + i + " " + dom[i].label;
+               
+                if (dom[i].children || dom[i].c) {
               
-                    this.domToHTML(dom[i].children, $divParent);
+             
+                    this.appendDOM((dom[i].children) ? dom[i].children: (dom[i].c) ? dom[i].c:null, _E, 4); 
+                    
+                    // If children: then return children else if C: then return C
+                  
                 }
-                main.append($divParent);
 
-                var height = $divParent.offsetHeight+parseInt(window.getComputedStyle($divParent).getPropertyValue('margin-top'))+parseInt(window.getComputedStyle($divParent).getPropertyValue('margin-bottom'));
+            }
 
-                console.log(height);
+               
+
+                if(behaviour.fetchAll){
+                   activity.append(_E);
+                }else{
+                  
+                    main.append(_E);
+                }
+                
+
+                if(!behaviour.fetchAll){
+
+                
+                var height = _E.offsetHeight+parseInt(window.getComputedStyle(_E).getPropertyValue('margin-top'))+parseInt(window.getComputedStyle(_E).getPropertyValue('margin-bottom'));
+
+              
                 
               
 
@@ -228,6 +300,7 @@ class Square {
                     break;
                 }
                 
+            }
 
 
 
@@ -237,11 +310,12 @@ class Square {
 
             }
 
+            if(!behaviour.fetchAll){
             this.__WINDOWS.push({stopId: stopPoint, dir: "down", scrollTop: this.__HEIGHT_USED});
             main.setAttribute("scrollTop", this.__HEIGHT_USED);
             main.style.height = win_h+"px";
 
-         
+            }
 
         }
 
