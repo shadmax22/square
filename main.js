@@ -1,21 +1,22 @@
 class Square {
 
     constructor() {
-        this.defaultWindowSize = window.innerHeight;
-        this.bodyHeight = this.defaultWindowSize;
-        this.maxHeight = this.bodyHeight + 100;
-        this.heightUsed = 0;
-        this.exPermission = true;
-        this.stopPoint = 0;
-        this.heightSum = 0;
-        this.newheightSum = 0;
-        this.exScrollPermission = false;
-        this.arr = null;
-        this.noOfMainDiv = 0;
-        this.scrollWindow = 0;
-        this.scrollTop = 0;
-        this.WINDOWS = [];
-        this.storedWindows = [];
+        this.__WINDOW_HEIGHT = 0;
+        this.__BODY_HEIGHT = 0;
+        this.__MAX_HEIGHT = 0 + 100;
+        this.__HEIGHT_USED = 0;
+        this.__N_WINDOW = 0;
+       
+        this.__SCROLLTOP = 0;
+
+        this.__EX_PERMISSION = true;
+        this.__STOP_POINT = 0;
+        this.__EX_SCROLL_PERMISSION = false;
+      
+       
+        this.__WINDOWS = [];
+        this.__STORED_WINDOWS = [];
+      
     }
 
 
@@ -24,7 +25,7 @@ class Square {
     }
     appendDOM(dom, activity, n) {
 
-        let behaviour = { onload: false, fetchScroll: false, upScroll: false, downScroll: false }
+        let behaviour = { onload: false, fetchScroll: false, upScroll: false, downScroll: false, fetchSome: false }
         let exec = false;
 
       
@@ -33,7 +34,7 @@ class Square {
 
            
             
-            if(activity.scrollTop + activity.offsetHeight < this.scrollTop){
+            if(activity.scrollTop + activity.offsetHeight < this.__SCROLLTOP){
                 
                 behaviour.upScroll = true;
              
@@ -41,23 +42,24 @@ class Square {
                 behaviour.downScroll = true;
             }
         
-            this.scrollTop = activity.scrollTop + activity.offsetHeight;
+            this.__SCROLLTOP = activity.scrollTop + activity.offsetHeight;
            
             
 
-            if (this.scrollTop > this.bodyHeight - 100) {
+            if (this.__SCROLLTOP > this.__BODY_HEIGHT - 100) {
                 behaviour.fetchScroll = true;
-                this.exPermission = true;
-                this.bodyHeight += this.defaultWindowSize;
+                this.__EX_PERMISSION = true;
+                this.__BODY_HEIGHT += this.__WINDOW_HEIGHT;
 
                 
 
         
-                this.noOfMainDiv += 1;
+                this.__N_WINDOW += 1;
         
                 exec = true;
             }
         };
+        if (n==3) { behaviour.fetchSome = true; }
 
         // TODO #2 OnScrollUp trigger hidden partial windows to display.
 
@@ -74,7 +76,7 @@ class Square {
                
                 // console.time("onUpScroll"); 
              
-                let lastStoredWin = this.WINDOWS.findLast((e, i, a) =>{ return e['dir'] == "up"});
+                let lastStoredWin = this.__WINDOWS.findLast((e, i, a) =>{ return e['dir'] == "up"});
                 // console.log(lastStoredWin);
 
                 if(lastStoredWin != undefined) {
@@ -114,7 +116,7 @@ class Square {
                 
 
                 // console.time("onDownScroll");
-                let lastStoredWin = this.WINDOWS.find((e, i, a) =>{ return e['dir'] == "down"});
+                let lastStoredWin = this.__WINDOWS.find((e, i, a) =>{ return e['dir'] == "down"});
               
                 let e = document.querySelector(".m_"+lastStoredWin['stopId']);
                
@@ -162,23 +164,25 @@ class Square {
 
         
         
-        if (behaviour.onload || behaviour.fetchScroll) {
+        if (behaviour.onload || behaviour.fetchScroll || behaviour.fetchSome) {
             
             
             // let main = $("<div class='part_win m_" + this.stopPoint + " ' dir=down vis=1></div>");
 
             let main =  document.createElement("div");
-            main.className= "part_win m_"+this.stopPoint;
+            main.className= "part_win m_"+this.__STOP_POINT;
             main.setAttribute("dir", "down");
             main.setAttribute("vis", "1");
       
             activity.append(main);
 
             var LOADED_EL = 0;
-            let stopPoint = this.stopPoint;
+            let stopPoint = this.__STOP_POINT;
             var win_h = 0;
 
-            for (var i = this.stopPoint + n; i < dom.length; i++) {
+            if(behaviour.fetchSome) { n = 1; }
+
+            for (var i = this.__STOP_POINT + n; i < dom.length; i++) {
 
                 
 
@@ -202,24 +206,24 @@ class Square {
               
 
 
-                this.heightUsed += height;
+                this.__HEIGHT_USED += height;
                 win_h += height;
                 LOADED_EL += 1;
           
 
               
-                if (this.heightUsed > this.bodyHeight) {
+                if (this.__HEIGHT_USED > this.__BODY_HEIGHT) {
 
-                    this.exPermission = false;
-                    this.exScrollPermission = true;
-                    this.stopPoint = i;
+                    this.__EX_PERMISSION = false;
+                    this.__EX_SCROLL_PERMISSION = true;
+                    this.__STOP_POINT = i;
                   
                     break;
                 }
                 if (i == dom.length - 1) {
-                    this.exPermission = false;
-                    this.stopPoint = i;
-                    this.exScrollPermission = true;
+                    this.__EX_PERMISSION = false;
+                    this.__STOP_POINT = i;
+                    this.__EX_SCROLL_PERMISSION = true;
           
                     break;
                 }
@@ -233,8 +237,8 @@ class Square {
 
             }
 
-            this.WINDOWS.push({stopId: stopPoint, dir: "down", scrollTop: this.heightUsed});
-            main.setAttribute("scrollTop", this.heightUsed);
+            this.__WINDOWS.push({stopId: stopPoint, dir: "down", scrollTop: this.__HEIGHT_USED});
+            main.setAttribute("scrollTop", this.__HEIGHT_USED);
             main.style.height = win_h+"px";
 
          
@@ -250,8 +254,11 @@ class Square {
 
         this.appendDOM(dom, activity, 0);
        
+      
+
         activity.onscroll =() => {
 
+            
      
           
             this.appendDOM(dom, activity, 1);
@@ -266,7 +273,42 @@ class Square {
 
     page(dom, activity) {
 
+       
+        
+        this.__WINDOW_HEIGHT = activity.offsetHeight;
+        this.__BODY_HEIGHT = this.__WINDOW_HEIGHT;
+        this.__MAX_HEIGHT = this.__BODY_HEIGHT + 100;
+       
+        
+
         this.domToHTML(dom.main, activity);
+
+
+        // Resize Behaviour
+
+        let a = this.__WINDOW_HEIGHT;
+        let b = this.__HEIGHT_USED;
+
+        let c = ()=>{
+            this.appendDOM(dom.main, activity, 3)
+        };
+        window.onresize = function(e){
+
+           
+           
+            if(a != activity.offsetHeight){
+
+                if(activity.offsetHeight > b){
+
+                    // If height used is less than body height then
+
+                    c();
+                    
+                }
+                
+            }
+            
+        }
 
     }
 
