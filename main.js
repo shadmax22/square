@@ -15,6 +15,7 @@ class Square {
         this.scrollWindow = 0;
         this.scrollTop = 0;
         this.WINDOWS = [];
+        this.storedWindows = [];
     }
 
 
@@ -71,7 +72,7 @@ class Square {
         
             if(behaviour.upScroll){
                
-                console.time("onUpScroll"); 
+                // console.time("onUpScroll"); 
              
                 let lastStoredWin = this.WINDOWS.findLast((e, i, a) =>{ return e['dir'] == "up"});
                 // console.log(lastStoredWin);
@@ -85,8 +86,19 @@ class Square {
 
                   
                    
-                    e.style.opacity =  '1';
+                    // e.style.opacity =  '1';
+                    
+                   
+                   
                     lastStoredWin['dir']= 'down';
+
+                    for (var i = 0; i < e.children.length; i++) {
+                        
+                        var c = e.children[i];
+                       
+                        c.style.display = c.getAttribute("display");
+                       
+                      }
                     
 
                 }
@@ -94,14 +106,14 @@ class Square {
                
               
             }
-            console.timeEnd("onUpScroll");  
+            // console.timeEnd("onUpScroll");  
                
             }
             if(behaviour.downScroll){
 
                 
 
-                console.time("onDownScroll");
+                // console.time("onDownScroll");
                 let lastStoredWin = this.WINDOWS.find((e, i, a) =>{ return e['dir'] == "down"});
               
                 let e = document.querySelector(".m_"+lastStoredWin['stopId']);
@@ -109,13 +121,35 @@ class Square {
                 if(activity.scrollTop > lastStoredWin["scrollTop"]){
                    
                     lastStoredWin['dir']= 'up';
-                    console.log(lastStoredWin);
-                    e.style.opacity = 0;
+                   
                     
+                    // e.style.opacity = 0;
+
+                    for (var i = 0; i < e.children.length; i++) {
+                        
+                        var c = e.children[i];
+                        c.setAttribute("d", window.getComputedStyle(c).getPropertyValue('display'));
+                        c.style.display = "none";
+                       
+                      }
+
+                   // this.kpop = e.cloneNode(true);
+
+                   // e.innerHTML = "";
+
+
+                  //  console.log(this.kpop.innerHTML);
+
+               
+                    
+
+                    
+                    
+                    // e.innerHTML = "";
 
                 }
 
-                console.timeEnd("onDownScroll");
+                // console.timeEnd("onDownScroll");
 
              
                 
@@ -142,6 +176,7 @@ class Square {
 
             var LOADED_EL = 0;
             let stopPoint = this.stopPoint;
+            var win_h = 0;
 
             for (var i = this.stopPoint + n; i < dom.length; i++) {
 
@@ -164,9 +199,11 @@ class Square {
 
                 console.log(height);
                 
+              
 
 
                 this.heightUsed += height;
+                win_h += height;
                 LOADED_EL += 1;
           
 
@@ -198,7 +235,7 @@ class Square {
 
             this.WINDOWS.push({stopId: stopPoint, dir: "down", scrollTop: this.heightUsed});
             main.setAttribute("scrollTop", this.heightUsed);
-            main.style.height = this.heightUsed;
+            main.style.height = win_h+"px";
 
          
 
